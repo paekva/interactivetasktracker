@@ -1,13 +1,40 @@
 import React, {useCallback, useState} from "react";
 import './ToDo.css'
-import {IconButton, OutlinedInput} from "@material-ui/core";
-import {Add} from "@material-ui/icons";
+import {Card, CardActions, CardContent, IconButton, OutlinedInput} from "@material-ui/core";
+import {Add, Delete} from "@material-ui/icons";
+
+type ToDoItem = {id: number, text: string};
+const defaultList: ToDoItem[] = [
+    {
+        id: 0,
+        text: '1'
+    },
+    {
+        id: 1,
+        text: '2'
+    },
+    {
+        id: 2,
+        text: '3'
+    },
+]
 
 export const ToDo = ():JSX.Element => {
-    const [todos, setTodos] = useState([ '1', '2', '3']);
+    const [nextId, setNextId] = useState<number>(3);
+    const [todos, setTodos] = useState<ToDoItem[]>(defaultList);
     const [value, setValue] = useState('');
 
-    const onAddPress = useCallback(() => setTodos([...todos, value]), [value, todos]);
+    const onAddPress = useCallback(() => {
+        setTodos([...todos, { id: nextId, text: value}]);
+        setNextId(nextId+1);
+    }, [nextId, value, todos]);
+
+    const onDeleteTask = useCallback((event) => {
+        const name = event.currentTarget.name;
+        const newTodos = todos.filter(el => el.id.toString() !== name);
+        setTodos(newTodos);
+    }, [todos]);
+
     return <div className='todo'>
         <div className='addToTodo'>
             <OutlinedInput
@@ -18,7 +45,6 @@ export const ToDo = ():JSX.Element => {
                 endAdornment={
                     <IconButton
                         color="primary"
-                        aria-label="add an alarm"
                         title='Add new task'
                         onClick={onAddPress}
                     >
@@ -29,7 +55,22 @@ export const ToDo = ():JSX.Element => {
 
         </div>
         <div className='todoList'>
-            {todos.map((el, index) => <div className='todoItem' key={`${index} todos`}>{el}</div>)}
+            <div className='smallTitle'> TO DO </div>
+            {todos.map((el) => <Card className='todoItem' key={`${el.id} todos`}>
+                <CardContent>
+                    {el.text}
+                </CardContent>
+                <CardActions>
+                    <IconButton
+                        name={el.id.toString()}
+                        color="primary"
+                        title='Delete the task'
+                        onClick={onDeleteTask}
+                    >
+                        <Delete />
+                    </IconButton>
+                </CardActions>
+            </Card>)}
         </div>
     </div>
 }
