@@ -8,5 +8,8 @@ export enum ListItemPosition {
 }
 
 export const ListItem = (props: {position: ListItemPosition, children: React.ReactNode}):JSX.Element => {
-    return <div>{props.children}</div>
+    const additionalStyle = props.position === ListItemPosition.LAST
+        ? 'last' : props.position === ListItemPosition.FIRST
+            ? 'first' : 'last first'
+    return <div className={`${additionalStyle} list`}>{props.children}</div>
 }

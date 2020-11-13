@@ -37,6 +37,7 @@ export const ToDo = ():JSX.Element => {
 
     return <div className='todo'>
         <div className='addToTodo'>
+            <div className='smallTitle'> TO DO </div>
             <OutlinedInput
                 required
                 id="outlined-required"
@@ -52,10 +53,8 @@ export const ToDo = ():JSX.Element => {
                     </IconButton>
                 }
             />
-
         </div>
         <div className='todoList'>
-            <div className='smallTitle'> TO DO </div>
             {todos.map((el) => <Card className='todoItem' key={`${el.id} todos`}>
                 <CardContent>
                     {el.text}

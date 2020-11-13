@@ -8,7 +8,7 @@ export const ListWrapper = (props: {children: React.ReactNode[]}): JSX.Element =
             <ListItem
                 key={`${index} list`}
                 position={index === 0 ? ListItemPosition.FIRST
-                    : index === props.children.length
+                    : index === props.children.length - 1
                         ? ListItemPosition.LAST
                         : ListItemPosition.MEDIATE
                 }>
