@@ -13,4 +13,13 @@
 
 .addToTodo {
     flex: 1;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.todoItem {
+    padding: 5px;
+    border: 1px solid black;
 }
