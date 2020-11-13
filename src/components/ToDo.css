@@ -1,0 +1,16 @@
+.todo, .todoList {
+    display: flex;
+    flex-direction: column;
+}
+
+.todo{
+    flex: 1;
+}
+
+.todoList {
+    flex: 8;
+}
+
+.addToTodo {
+    flex: 1;
+}
