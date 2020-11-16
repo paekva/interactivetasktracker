@@ -2,39 +2,18 @@ import React, {useCallback, useState} from "react";
 import './ToDo.css'
 import {Card, CardActions, CardContent, IconButton, OutlinedInput} from "@material-ui/core";
 import {Add, Delete} from "@material-ui/icons";
+import {Draggable, Droppable} from "react-beautiful-dnd";
+import {todoDroppableId, ToDoItem} from "../App";
 
-type ToDoItem = {id: number, text: string};
-const defaultList: ToDoItem[] = [
-    {
-        id: 0,
-        text: '1'
-    },
-    {
-        id: 1,
-        text: '2'
-    },
-    {
-        id: 2,
-        text: '3'
-    },
-]
-
-export const ToDo = ():JSX.Element => {
-    const [nextId, setNextId] = useState<number>(3);
-    const [todos, setTodos] = useState<ToDoItem[]>(defaultList);
+export const ToDo = (props: {todos: ToDoItem[], addNewTodo: (value: string) => void, deleteToDo: (value: string) => void}):JSX.Element => {
     const [value, setValue] = useState('');
+    const { todos , deleteToDo, addNewTodo} = props;
 
-    const onAddPress = useCallback(() => {
-        setTodos([...todos, { id: nextId, text: value}]);
-        setNextId(nextId+1);
-    }, [nextId, value, todos]);
-
-    const onDeleteTask = useCallback((event) => {
+    const onAdd = useCallback(() => addNewTodo(value) ,[ addNewTodo, value]);
+    const onDelete = useCallback((event) => {
         const name = event.currentTarget.name;
-        const newTodos = todos.filter(el => el.id.toString() !== name);
-        setTodos(newTodos);
-    }, [todos]);
-
+        deleteToDo(name);
+    } ,[ deleteToDo ]);
     return <div className='todo'>
         <div className='addToTodo'>
             <div className='smallTitle'> TO DO </div>
@@ -47,29 +26,49 @@ export const ToDo = ():JSX.Element => {
                     <IconButton
                         color="primary"
                         title='Add new task'
-                        onClick={onAddPress}
+                        onClick={onAdd}
                     >
                         <Add />
                     </IconButton>
                 }
             />
         </div>
-        <div className='todoList'>
-            {todos.map((el) => <Card className='todoItem' key={`${el.id} todos`}>
-                <CardContent>
-                    {el.text}
-                </CardContent>
-                <CardActions>
-                    <IconButton
-                        name={el.id.toString()}
-                        color="primary"
-                        title='Delete the task'
-                        onClick={onDeleteTask}
-                    >
-                        <Delete />
-                    </IconButton>
-                </CardActions>
-            </Card>)}
-        </div>
+        <Droppable droppableId={todoDroppableId}>
+            {
+                provided => (
+                    <div className='todoList' ref={provided.innerRef} {...provided.droppableProps}>
+                        {todos.map((el, index) => (
+                            <Draggable draggableId={el.id.toString()}
+                                       index={index}
+                                       key={`${el.id} todos`}>
+                                {provided1 => (
+                                    <Card
+                                        ref={provided1.innerRef}
+                                        {...provided1.draggableProps}
+                                        {...provided1.dragHandleProps}
+                                        className='todoItem'
+                                    >
+                                        <CardContent>
+                                            {el.text}
+                                        </CardContent>
+                                        <CardActions>
+                                            <IconButton
+                                                name={el.id.toString()}
+                                                color="primary"
+                                                title='Delete the task'
+                                                onClick={onDelete}
+                                            >
+                                                <Delete />
+                                            </IconButton>
+                                        </CardActions>
+                                    </Card>
+                                )}
+                            </Draggable>
+                        ))}
+                        {provided.placeholder}
+                    </div>
+                )
+            }
+        </Droppable>
     </div>
 }
