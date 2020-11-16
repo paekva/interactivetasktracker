@@ -13,7 +13,14 @@ export const ListWrapper = (props: {
             provided => (
                 <div className='todoList' ref={provided.innerRef} {...provided.droppableProps}>
                     {props.listItems.map((el, index) =>
-                        <ListItem key={el.id} id={el.id} index={index} itemText={el.text} onDelete={props.onItemDelete}/>
+                        <ListItem
+                            droppableId={props.droppableId}
+                            key={el.id}
+                            id={el.id}
+                            index={index}
+                            itemText={el.text}
+                            onDelete={props.onItemDelete}
+                        />
                     )}
                     {provided.placeholder}
                 </div>

@@ -4,13 +4,14 @@ import {Card, CardActions, CardContent, IconButton} from "@material-ui/core";
 import {Delete} from "@material-ui/icons";
 
 export const ListItem = (props: {
+    droppableId: string,
     id: number,
     index: number,
     itemText: string,
     onDelete: (event: any) => void
-}): JSX.Element => <Draggable draggableId={props.id.toString()}
+}): JSX.Element => <Draggable draggableId={`${props.id} ${props.droppableId}`}
                               index={props.index}
-                              key={`${props.id} todos`}>
+                              key={`${props.id} ${props.droppableId}`}>
     {provided1 => (
         <Card
             ref={provided1.innerRef}

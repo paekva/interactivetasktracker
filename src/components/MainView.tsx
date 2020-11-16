@@ -3,8 +3,14 @@ import {ColumnsWrapper} from "./common/ColumnsWrapper";
 import {ToDo} from "./ToDo";
 import React, {useCallback, useState} from "react";
 import {ItemData} from "./extra/types";
-import {addItemToListAtPosition, removeItemInListAtPosition, todoDroppableId} from "./extra/dndUtils";
+import {
+    addItemToListAtPosition,
+    inProgressDroppableId,
+    removeItemInListAtPosition,
+    todoDroppableId
+} from "./extra/dndUtils";
 import {InProgress} from "./InProgress";
+import {Done} from "./Done";
 
 const defaultList: ItemData[] = [
     {
@@ -21,9 +27,16 @@ const defaultList: ItemData[] = [
     },
 ]
 
+const removeItem = (list: ItemData[], onSave: (newList: ItemData[]) => void ) => (event: any) => {
+    const id = event.currentTarget.name;
+    const updated = list.filter(el => el.id.toString() !== id);
+    onSave(updated);
+}
+
 export const MainView = (): JSX.Element => {
     const [todos, setTodos] = useState<ItemData[]>(defaultList);
-    const [inProgress, setInProgress] = useState<ItemData[]>([{id: 3, text: '4'}]);
+    const [inProgress, setInProgress] = useState<ItemData[]>([]);
+    const [done, setDone] = useState<ItemData[]>([]);
     const [nextId, setNextId] = useState<number>(3);
 
     const onAdd = useCallback((value: string) => {
@@ -31,10 +44,27 @@ export const MainView = (): JSX.Element => {
         setNextId(nextId+1);
     }, [nextId, todos]);
 
-    const onDeleteFromTodo = useCallback((id: string) => {
-        const newTodos = todos.filter(el => el.id.toString() !== id);
-        setTodos(newTodos);
-    }, [todos]);
+    const getListByType = useCallback((type: string) => {
+        switch (type) {
+            case todoDroppableId:
+                return todos;
+            case inProgressDroppableId:
+                return inProgress;
+            default:
+                return done;
+        }
+    } , [todos, inProgress, done]);
+
+    const getListMethodForUpdateByType = useCallback((type: string) => {
+        switch (type) {
+            case todoDroppableId:
+                return setTodos;
+            case inProgressDroppableId:
+                return setInProgress;
+            default:
+                return setDone;
+        }
+    } , []);
 
     const onDragPerformed = useCallback((dragData) => {
         let sourceIdx = parseInt(dragData.source.index);
@@ -43,25 +73,25 @@ export const MainView = (): JSX.Element => {
         let destinationIdx = parseInt(dragData.destination.index);
         let destination = dragData.destination.droppableId;
 
-        const sourceList = source === todoDroppableId ? todos : inProgress;
-        const destinationList = destination === todoDroppableId ? todos : inProgress;
+        const sourceList = getListByType(source);
+        const destinationList = getListByType(destination);
 
         // handle removing item
         const results = removeItemInListAtPosition(sourceList, sourceIdx);
-        source === todoDroppableId ? setTodos(results.list) : setInProgress(results.list);
+        getListMethodForUpdateByType(source)(results.list);
 
         // handle adding item
         const newList = addItemToListAtPosition(destinationList, results.removed, destinationIdx);
-        destination === todoDroppableId ? setTodos(newList) : setInProgress(newList);
+        getListMethodForUpdateByType(destination)(newList);
 
-    }, [inProgress, todos]);
+    }, [getListMethodForUpdateByType, getListByType]);
 
     return (
         <DragDropContext onDragEnd={onDragPerformed}>
             <ColumnsWrapper>
-                <ToDo items={todos} onAddNewItem={onAdd} onItemDelete={onDeleteFromTodo}/>
-                <InProgress items={inProgress} onItemDelete={onDeleteFromTodo}/>
-                <div>3</div>
+                <ToDo items={todos} onAddNewItem={onAdd} onItemDelete={removeItem(todos, setTodos)}/>
+                <InProgress items={inProgress} onItemDelete={removeItem(inProgress, setInProgress)}/>
+                <Done items={done} onItemDelete={removeItem(done, setDone)} />
             </ColumnsWrapper>
         </DragDropContext>
     )

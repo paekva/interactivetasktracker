@@ -11,10 +11,6 @@ export const ToDo = (props: ColumnProps):JSX.Element => {
     const { items , onItemDelete, onAddNewItem} = props;
 
     const onAdd = useCallback(() => onAddNewItem(value) ,[ onAddNewItem, value]);
-    const onDelete = useCallback((event) => {
-        const name = event.currentTarget.name;
-        onItemDelete(name);
-    } ,[ onItemDelete ]);
     return <div className='todo'>
         <div className='addToTodo'>
             <div className='smallTitle'> TO DO </div>
@@ -34,6 +30,6 @@ export const ToDo = (props: ColumnProps):JSX.Element => {
                 }
             />
         </div>
-        <ListWrapper droppableId={todoDroppableId} onItemDelete={onDelete} listItems={items} />
+        <ListWrapper droppableId={todoDroppableId} onItemDelete={onItemDelete} listItems={items} />
     </div>
 }
