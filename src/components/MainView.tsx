@@ -3,7 +3,8 @@ import {ColumnsWrapper} from "./common/ColumnsWrapper";
 import {ToDo} from "./ToDo";
 import React, {useCallback, useState} from "react";
 import {ItemData} from "./extra/types";
-import {addItemToListAtPosition, removeItemInListAtPosition} from "./extra/dndUtils";
+import {addItemToListAtPosition, removeItemInListAtPosition, todoDroppableId} from "./extra/dndUtils";
+import {InProgress} from "./InProgress";
 
 const defaultList: ItemData[] = [
     {
@@ -22,6 +23,7 @@ const defaultList: ItemData[] = [
 
 export const MainView = (): JSX.Element => {
     const [todos, setTodos] = useState<ItemData[]>(defaultList);
+    const [inProgress, setInProgress] = useState<ItemData[]>([{id: 3, text: '4'}]);
     const [nextId, setNextId] = useState<number>(3);
 
     const onAdd = useCallback((value: string) => {
@@ -29,35 +31,36 @@ export const MainView = (): JSX.Element => {
         setNextId(nextId+1);
     }, [nextId, todos]);
 
-    const onDelete = useCallback((id: string) => {
+    const onDeleteFromTodo = useCallback((id: string) => {
         const newTodos = todos.filter(el => el.id.toString() !== id);
         setTodos(newTodos);
     }, [todos]);
 
     const onDragPerformed = useCallback((dragData) => {
-        let itemId = dragData.draggableId;
-
         let sourceIdx = parseInt(dragData.source.index);
         let source = dragData.source.droppableId;
 
         let destinationIdx = parseInt(dragData.destination.index);
-        let destination = dragData.source.droppableId;
+        let destination = dragData.destination.droppableId;
+
+        const sourceList = source === todoDroppableId ? todos : inProgress;
+        const destinationList = destination === todoDroppableId ? todos : inProgress;
 
         // handle removing item
-        const results = removeItemInListAtPosition(todos, sourceIdx);
-        // if(source === todoDroppableId)
+        const results = removeItemInListAtPosition(sourceList, sourceIdx);
+        source === todoDroppableId ? setTodos(results.list) : setInProgress(results.list);
 
         // handle adding item
-        const newList = addItemToListAtPosition(results.list, results.removed, destinationIdx);
-        setTodos(newList);
+        const newList = addItemToListAtPosition(destinationList, results.removed, destinationIdx);
+        destination === todoDroppableId ? setTodos(newList) : setInProgress(newList);
 
-    }, [todos]);
+    }, [inProgress, todos]);
 
     return (
         <DragDropContext onDragEnd={onDragPerformed}>
             <ColumnsWrapper>
-                <ToDo todos={todos} addNewTodo={onAdd} deleteToDo={onDelete}/>
-                <div>2</div>
+                <ToDo items={todos} onAddNewItem={onAdd} onItemDelete={onDeleteFromTodo}/>
+                <InProgress items={inProgress} onItemDelete={onDeleteFromTodo}/>
                 <div>3</div>
             </ColumnsWrapper>
         </DragDropContext>

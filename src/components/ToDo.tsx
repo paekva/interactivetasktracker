@@ -4,17 +4,17 @@ import {IconButton, OutlinedInput} from "@material-ui/core";
 import {Add, } from "@material-ui/icons";
 import {todoDroppableId} from "./extra/dndUtils";
 import {ListWrapper} from "./common/ListWrapper";
-import {ItemData} from "./extra/types";
+import {ColumnProps} from "./extra/types";
 
-export const ToDo = (props: {todos: ItemData[], addNewTodo: (value: string) => void, deleteToDo: (value: string) => void}):JSX.Element => {
+export const ToDo = (props: ColumnProps):JSX.Element => {
     const [value, setValue] = useState('');
-    const { todos , deleteToDo, addNewTodo} = props;
+    const { items , onItemDelete, onAddNewItem} = props;
 
-    const onAdd = useCallback(() => addNewTodo(value) ,[ addNewTodo, value]);
+    const onAdd = useCallback(() => onAddNewItem(value) ,[ onAddNewItem, value]);
     const onDelete = useCallback((event) => {
         const name = event.currentTarget.name;
-        deleteToDo(name);
-    } ,[ deleteToDo ]);
+        onItemDelete(name);
+    } ,[ onItemDelete ]);
     return <div className='todo'>
         <div className='addToTodo'>
             <div className='smallTitle'> TO DO </div>
@@ -34,6 +34,6 @@ export const ToDo = (props: {todos: ItemData[], addNewTodo: (value: string) => v
                 }
             />
         </div>
-        <ListWrapper droppableId={todoDroppableId} onItemDelete={onDelete} listItems={todos} />
+        <ListWrapper droppableId={todoDroppableId} onItemDelete={onDelete} listItems={items} />
     </div>
 }
