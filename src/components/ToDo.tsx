@@ -1,11 +1,12 @@
 import React, {useCallback, useState} from "react";
 import './ToDo.css'
-import {Card, CardActions, CardContent, IconButton, OutlinedInput} from "@material-ui/core";
-import {Add, Delete} from "@material-ui/icons";
-import {Draggable, Droppable} from "react-beautiful-dnd";
-import {todoDroppableId, ToDoItem} from "../App";
+import {IconButton, OutlinedInput} from "@material-ui/core";
+import {Add, } from "@material-ui/icons";
+import {todoDroppableId} from "./extra/dndUtils";
+import {ListWrapper} from "./common/ListWrapper";
+import {ItemData} from "./extra/types";
 
-export const ToDo = (props: {todos: ToDoItem[], addNewTodo: (value: string) => void, deleteToDo: (value: string) => void}):JSX.Element => {
+export const ToDo = (props: {todos: ItemData[], addNewTodo: (value: string) => void, deleteToDo: (value: string) => void}):JSX.Element => {
     const [value, setValue] = useState('');
     const { todos , deleteToDo, addNewTodo} = props;
 
@@ -33,42 +34,6 @@ export const ToDo = (props: {todos: ToDoItem[], addNewTodo: (value: string) => v
                 }
             />
         </div>
-        <Droppable droppableId={todoDroppableId}>
-            {
-                provided => (
-                    <div className='todoList' ref={provided.innerRef} {...provided.droppableProps}>
-                        {todos.map((el, index) => (
-                            <Draggable draggableId={el.id.toString()}
-                                       index={index}
-                                       key={`${el.id} todos`}>
-                                {provided1 => (
-                                    <Card
-                                        ref={provided1.innerRef}
-                                        {...provided1.draggableProps}
-                                        {...provided1.dragHandleProps}
-                                        className='todoItem'
-                                    >
-                                        <CardContent>
-                                            {el.text}
-                                        </CardContent>
-                                        <CardActions>
-                                            <IconButton
-                                                name={el.id.toString()}
-                                                color="primary"
-                                                title='Delete the task'
-                                                onClick={onDelete}
-                                            >
-                                                <Delete />
-                                            </IconButton>
-                                        </CardActions>
-                                    </Card>
-                                )}
-                            </Draggable>
-                        ))}
-                        {provided.placeholder}
-                    </div>
-                )
-            }
-        </Droppable>
+        <ListWrapper droppableId={todoDroppableId} onItemDelete={onDelete} listItems={todos} />
     </div>
 }
