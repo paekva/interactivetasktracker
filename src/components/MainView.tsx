@@ -91,7 +91,11 @@ export const MainView = (): JSX.Element => {
             <ColumnsWrapper>
                 <ToDo items={todos} onAddNewItem={onAdd} onItemDelete={removeItem(todos, setTodos)}/>
                 <InProgress items={inProgress} onItemDelete={removeItem(inProgress, setInProgress)}/>
-                <Done items={done} onItemDelete={removeItem(done, setDone)} />
+                <Done
+                    items={done}
+                    onItemDelete={removeItem(done, setDone)}
+                    max={todos.length + inProgress.length + done.length}
+                />
             </ColumnsWrapper>
         </DragDropContext>
     )

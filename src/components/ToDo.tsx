@@ -10,14 +10,13 @@ export const ToDo = (props: ColumnProps):JSX.Element => {
     const [value, setValue] = useState('');
     const { items , onItemDelete, onAddNewItem} = props;
 
-    const onAdd = useCallback(() => onAddNewItem(value) ,[ onAddNewItem, value]);
+    const onAdd = useCallback(() => onAddNewItem ? onAddNewItem(value) : null,[ onAddNewItem, value]);
     return <div className='todo'>
         <div className='addToTodo'>
             <div className='smallTitle'> TO DO </div>
             <OutlinedInput
                 required
                 id="outlined-required"
-                label="Add new task"
                 onChange={event => setValue(event.currentTarget.value) }
                 endAdornment={
                     <IconButton
