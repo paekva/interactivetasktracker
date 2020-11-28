@@ -1,4 +1,4 @@
-export type ItemData = { id: number, text: string };
+export type ItemData = { id: number, text: string, date: number };
 
 export type ColumnProps = {
     items: ItemData[],

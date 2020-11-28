@@ -19,6 +19,7 @@ export const ListWrapper = (props: {
                             id={el.id}
                             index={index}
                             itemText={el.text}
+                            date={el.date}
                             onDelete={props.onItemDelete}
                         />
                     )}

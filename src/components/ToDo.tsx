@@ -1,7 +1,7 @@
 import React, {useCallback, useState} from "react";
 import './ToDo.css'
 import {IconButton, OutlinedInput} from "@material-ui/core";
-import {Add, } from "@material-ui/icons";
+import {Add, CalendarToday,} from "@material-ui/icons";
 import {todoDroppableId} from "./extra/dndUtils";
 import {ListWrapper} from "./common/ListWrapper";
 import {ColumnProps} from "./extra/types";
@@ -19,13 +19,23 @@ export const ToDo = (props: ColumnProps):JSX.Element => {
                 id="outlined-required"
                 onChange={event => setValue(event.currentTarget.value) }
                 endAdornment={
-                    <IconButton
-                        color="primary"
-                        title='Add new task'
-                        onClick={onAdd}
-                    >
-                        <Add />
-                    </IconButton>
+                    <>
+                        <IconButton
+                            color="primary"
+                            title='Add new task'
+                            onClick={onAdd}
+                        >
+                            <CalendarToday />
+                        </IconButton>
+
+                        <IconButton
+                            color="primary"
+                            title='Add new task'
+                            onClick={onAdd}
+                        >
+                            <Add />
+                        </IconButton>
+                    </>
                 }
             />
         </div>

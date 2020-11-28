@@ -8,6 +8,7 @@ export const ListItem = (props: {
     id: number,
     index: number,
     itemText: string,
+    date: number,
     onDelete: (event: any) => void
 }): JSX.Element => <Draggable draggableId={`${props.id} ${props.droppableId}`}
                               index={props.index}
@@ -19,8 +20,11 @@ export const ListItem = (props: {
             {...provided1.dragHandleProps}
             className='todoItem'
         >
-            <CardContent>
-                {props.itemText}
+            <CardContent  style={{flex: 1, display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}}>
+                <div>{props.itemText}</div>
+                <div>
+                    {new Date(props.date).getDay()} : {new Date(props.date).getMonth()} : {new Date(props.date).getFullYear()}
+                </div>
             </CardContent>
             <CardActions>
                 <IconButton

@@ -15,15 +15,18 @@ import {Done} from "./Done";
 const defaultList: ItemData[] = [
     {
         id: 0,
-        text: '1'
+        text: '1',
+        date: Date.now()
     },
     {
         id: 1,
-        text: '2'
+        text: '2',
+        date: Date.now()
     },
     {
         id: 2,
-        text: '3'
+        text: '3',
+        date: Date.now()
     },
 ]
 
@@ -40,7 +43,7 @@ export const MainView = (): JSX.Element => {
     const [nextId, setNextId] = useState<number>(3);
 
     const onAdd = useCallback((value: string) => {
-        setTodos([...todos, { id: nextId, text: value}]);
+        setTodos([...todos, { id: nextId, text: value, date: Date.now()}]);
         setNextId(nextId+1);
     }, [nextId, todos]);
 
